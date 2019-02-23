@@ -24,53 +24,33 @@ void Timer0_Routine(void) interrupt 1
 {
   //1ms
   static uint clock;
-  static char disp,temp,val[8]={0x0c,0x12,seg_tab_none,seg_tab_none,
-                           seg_tab_none,seg_tab_none,seg_tab_none,seg_tab_none};
-	TR0=0;														
-  if(++clock==1000)
+	static uchar select,temp;
+	TR0=0;
+	if(++clock==1000)
   {
     clock=0;
-		temp=ds18b20_get();
-		val[2]=temp%10;
-		val[3]=temp/10;
-	}
-	for(disp=0;disp<8;disp++)
-	{
-		switch(disp)
+		if(++select==1)
 		{
-			case 0:
-			{
-				disp_val[disp]=val[disp];
-			}break;
-			case 1:
-			{
-				disp_val[disp]=val[disp];
-			}break;
-			case 2:
-			{
-				disp_val[disp]=val[disp];
-			}break;
-			case 3:
-			{
-				disp_val[disp]=val[disp];
-			}break;
-			case 4:
-			{
-				disp_val[disp]=val[disp];
-			}break;
-			case 5:
-			{
-				disp_val[disp]=val[disp];
-			}break;
-			case 6:
-			{
-				disp_val[disp]=val[disp];
-			}break;
-			case 7:
-			{
-				disp_val[disp]=val[disp];
-			}break;
-			default:break;
+			ds1302_burst_read(ds1302_time);
+			disp_val_none();
+			disp_val[0]=ds1302_time[0]&0x0f;
+			disp_val[1]=ds1302_time[0]>>4&0x0f;
+			disp_val[2]=0x11;
+			disp_val[3]=ds1302_time[1]&0x0f;
+			disp_val[4]=ds1302_time[1]>>4&0x0f;
+			disp_val[5]=0x11;
+			disp_val[6]=ds1302_time[2]&0x0f;
+			disp_val[7]=ds1302_time[2]>>4&0x0f;
+		}
+		else
+		{
+			select=0;
+			temp=ds18b20_get();
+			disp_val_none();
+			disp_val[0]=0x0c;
+			disp_val[1]=0x12;
+			disp_val[2]=temp%10;
+			disp_val[3]=temp/10;
 		}
 	}
 	dispscan();

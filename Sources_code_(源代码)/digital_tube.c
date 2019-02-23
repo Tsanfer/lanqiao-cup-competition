@@ -10,6 +10,15 @@ code uchar bit_tab[9]={0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01,0x00};
 uchar disp_val[8]={seg_tab_none,seg_tab_none,seg_tab_none,seg_tab_none,
                    seg_tab_none,seg_tab_none,seg_tab_none,seg_tab_none};
 
+void disp_val_none(void)
+{
+	uchar i;
+	for(i=0;i<8;i++)
+	{
+		disp_val[i]=seg_tab_none;
+	}
+}
+									 
 void dispscan(void)
 {
   static uchar pointer=0;
