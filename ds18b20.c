@@ -40,11 +40,11 @@ void ds18b20Init(void)
 
 void write_byte(uchar val)
 {
-	uchar i=0;
-	for(i=0;i<8;i++)
+	uchar i=0x00;
+	for(i=0x01;i;i<<=1)
 	{
 		DQ=0;
-		DQ=val&(0x01<<i);
+		DQ=val&i;
 		Delay50us();
 		Delay50us();
 		DQ=1;
@@ -53,12 +53,12 @@ void write_byte(uchar val)
 
 uchar read_byte()
 {
-	uchar i=0,val=0;
-	for(i=0;i<8;i++)
+	uchar i=0x00,val=0;
+	for(i=0x01;i;i<<=1)
 	{
 		DQ=0;
 		DQ=1;
-		if(DQ)val=val|(0x01<<i);
+		if(DQ)val=val|i;
 		Delay50us();
 		Delay50us();
 	}
@@ -77,5 +77,5 @@ uchar ds18b20_get(void)
 	temp[0]=read_byte();
 	temp[1]=read_byte();
 	val=temp[0]>>4&0x0f|temp[1]<<4&0xf0;
-	return val;
+	return val; //such as 27
 }
