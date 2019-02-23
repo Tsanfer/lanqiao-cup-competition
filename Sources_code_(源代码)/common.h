@@ -2,11 +2,12 @@
 #define COMMON_H
 
 #include "stc15f2k60s2.h"
+#include <intrins.h>
 
 typedef unsigned char uchar;
 typedef unsigned int uint;
 
-#define seg_tab_none 11
+#define seg_tab_none 19
 #define bit_tab_none 8
 
 extern uchar disp_val[8];
@@ -28,5 +29,6 @@ extern void relayInit(void);
 extern void buzzInit(void);
 extern void dispscan(void);
 extern void keyscan(void);
+extern uchar ds18b20_get(void);
 
 #endif
