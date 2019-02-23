@@ -1,5 +1,4 @@
 #include "common.h"
-#include "intrins.h"
 
 void SysInit(void)
 {
