@@ -4,7 +4,7 @@ sbit CE=P1^3;
 sbit SCLK=P1^7;
 sbit I_O=P2^3;
 
-uchar ds1302_time[8];
+uchar ds1302_time[7];
 code uchar Inittime[]={0x05,0x20,0x19,0x23,0x02,0x06,0x19};
 
 void ds1302_write_byte(uchar dat)
