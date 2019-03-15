@@ -38,5 +38,8 @@ extern void key_scan(void);
 extern uchar ds18b20_get(void);
 extern void ds1302Init(void);
 extern void ds1302_burst_read(uchar *val);
+//extern void e2_reset(void);
+extern void e2_read(uchar word,uchar *dat,uchar len);
+extern void e2_write(uchar word,uchar *dat,uchar len);
 
 #endif

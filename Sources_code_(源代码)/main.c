@@ -11,6 +11,7 @@ void SysInit(void)
 	buzzInit();
 	relayInit();
 	ds1302Init();
+	//e2_reset();
 	EA=1;
 	ET0=1;
 	ET1=1;
