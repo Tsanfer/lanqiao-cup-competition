@@ -1,6 +1,6 @@
 #include "common.h"
 
-static uchar page=0;
+static uchar page=1;
 
 void Timer0Init(void)		//1毫秒@11.0592MHz
 {
@@ -41,12 +41,31 @@ void Timer0_Routine(void) interrupt 1
 void Timer1_Routine(void) interrupt 3
 {
 	//50ms
-	uchar temperature,cont_clock;
+	static uchar i=0,temperature,cont_clock;
+	static uchar e2_write_data[8]={0,1,2,3,4,5,6,7},e2_read_data[8];
 	TR1=0;
 	if(++cont_clock==20)
 	{
 		cont_clock=0;
 		if(page==1)
+		{
+			disp_val_none();
+			e2_read(0x00,e2_read_data,sizeof(e2_read_data));
+			disp_val[0]=e2_read_data[0]%10;
+			disp_val[1]=e2_read_data[0]%100/10;
+			disp_val[2]=e2_read_data[0]/100;
+			disp_val[3]=e2_read_data[1]%10;
+			disp_val[4]=e2_read_data[1]%100/10;
+			disp_val[5]=e2_read_data[1]/100;
+			disp_val[6]=e2_read_data[2]%10;
+			disp_val[7]=e2_read_data[2]%100/10;
+			e2_write(0,e2_write_data,sizeof(e2_write_data));
+			for(i=0;i<sizeof(e2_write_data);i++)
+			{
+				e2_write_data[i]+=1;
+			}
+		}
+		else if(page==2)
 		{
 			disp_val_none();
 			temperature=ds18b20_get();
@@ -55,8 +74,8 @@ void Timer1_Routine(void) interrupt 3
 			disp_val[2]=temperature%10;
 			disp_val[3]=temperature/10;
 		}
-		else if(page==2)
-		{
+		else if(page==3)
+		{	
 			disp_val_none();
 			ds1302_burst_read(ds1302_time);
 			disp_val[0]=ds1302_time[0]&0x0f;
@@ -129,9 +148,9 @@ void Timer2_Routine(void) interrupt 12
 			case 11:disp_val[6]=11;break;
 			case 12:disp_val[6]=12;break;
 			case 13:disp_val[6]=13;break;
-			case 14:disp_val[6]=14;break;
-			case 15:page=1;break;
-			case 16:page=2;break;
+			case 14:page=3;break;
+			case 15:page=2;break;
+			case 16:page=1;break;
 			default:break;
 		}
 	}

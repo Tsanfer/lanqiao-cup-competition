@@ -44,6 +44,7 @@ void ds18b20Init(void)
 void ds18b20_write(uchar dat)
 {
 	uchar mask=0x00;
+	DQ=1;
 	for(mask=0x01;mask;mask<<=1)
 	{
 		DQ=0;
@@ -57,6 +58,7 @@ void ds18b20_write(uchar dat)
 uchar ds18b20_read(void)
 {
 	uchar mask=0x00,val=0;
+	DQ=1;
 	for(mask=0x01;mask;mask<<=1)
 	{
 		DQ=0;
