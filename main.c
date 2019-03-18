@@ -5,7 +5,8 @@ void SysInit(void)
 	disp_val_none();
 	Timer0Init();
 	Timer1Init();
-	Timer2Init();
+	UartInit();
+	//Timer2Init();
 	hc138Init();
 	ledInit();
 	buzzInit();
@@ -15,7 +16,8 @@ void SysInit(void)
 	EA=1;
 	ET0=1;
 	ET1=1;
-	IE2|=0x04;
+	ES=1;
+	//IE2|=0x04;
 }
 
 void main(void)
@@ -23,6 +25,6 @@ void main(void)
 	SysInit();
 	while(1)
 	{
-		;
+		;		
 	}
 }
