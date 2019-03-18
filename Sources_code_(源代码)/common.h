@@ -16,6 +16,7 @@ extern uchar ds1302_time[7];
 
 extern void Timer0Init(void);
 extern void Timer1Init(void);
+extern void UartInit(void);
 extern void Timer2Init(void);
 extern void hc138Init(void);
 extern void hc138_none(void);
@@ -41,5 +42,9 @@ extern void ds1302_burst_read(uchar *val);
 //extern void e2_reset(void);
 extern void e2_read(uchar word,uchar *dat,uchar len);
 extern void e2_write(uchar word,uchar *dat,uchar len);
+extern void get_dac(uchar *dat,uchar len);
+extern void set_dac(uchar dat);
+extern uint sonic_distance(void);
+extern void pwm(uchar dat);
 
 #endif
