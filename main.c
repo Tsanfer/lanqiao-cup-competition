@@ -10,7 +10,9 @@ void SysInit(void)
 	hc138Init();
 	ledInit();
 	buzzInit();
+	motorInit();
 	relayInit();
+	ds18b20Init();
 	ds1302Init();
 	//e2_reset();
 	EA=1;
@@ -23,8 +25,5 @@ void SysInit(void)
 void main(void)
 {
 	SysInit();
-	while(1)
-	{
-		;		
-	}
+	while(1);
 }

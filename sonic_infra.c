@@ -3,6 +3,8 @@
 sbit TX=P1^0;
 sbit RX=P1^1;
 
+uchar sonic_times=8;
+
 void Delay10us()		//@11.0592MHz
 {
 	unsigned char i;
@@ -12,10 +14,10 @@ void Delay10us()		//@11.0592MHz
 	while (--i);
 }
 
-void sonic_emit(void)
+void sonic_emit(uchar times)
 {
-	uchar i=8;
-	while(i--)
+	// 50KHz
+	while(times--)
 	{
 		TX=1;
 		Delay10us();
@@ -26,13 +28,16 @@ void sonic_emit(void)
 
 uint sonic_echo(void)
 {
-	static uint distance=0;
-	TL1 = 0x00;
-	TH1 = 0x00;
+	static uchar tl,th;
+	static uint distance,time;
+	tl=TL1;
+	th=TH1;
+	TH1=0x00;
+	TL1=0x00;
 	TF1=0;
-	TR1 = 1;
+	TR1=1;
 	while(RX&&~TF1);
-	TR1 = 0;
+	TR1=0;
 	if(TF1)
 	{
 		TF1=0;
@@ -41,19 +46,20 @@ uint sonic_echo(void)
 	}
 	else
 	{
-		distance=TH1;
-		distance<<=8;
-		distance|=TL1;
+		time=TH1;
+		time<<=8;
+		time|=TL1;
 	}
-	TL1 = 0x00;
-	TH1 = 0x4C;
-	distance=(uint)(distance*0.017);//distance=time*velocity/2
+	TH1=th;
+	TL1=tl;
+	distance=(uint)(time*0.017); // x=t*v=time/1000000*340*100/2
 	return distance;
 }
-uint sonic_distance(void)
+
+uint sonic_get(void)
 {
 	static uint distance=0;
-	sonic_emit();
+	sonic_emit(sonic_times);
 	distance=sonic_echo();
 	return distance;
 }
