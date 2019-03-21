@@ -1,8 +1,8 @@
 //数据总线要释放
 #include "common.h"
 
-sbit SCL = P2^0; 
-sbit SDA = P2^1;
+sbit SCL=P2^0;
+sbit SDA=P2^1;
 
 void Delay5us()		//@11.0592MHz
 {
@@ -13,40 +13,39 @@ void Delay5us()		//@11.0592MHz
 	while (--i);
 }
 
-
-void i2c_start()
+void i2c_start(void)
 {
-	SDA = 1;
+	SDA=1;
 	Delay5us();
-	SCL = 1;
+	SCL=1;
 	Delay5us();
-	SDA = 0;
+	SDA=0;
 	Delay5us();
-	SCL = 0;
+	SCL=0;
 	Delay5us();
 }
 
-void i2c_stop()
+void i2c_stop(void)
 {
-	SCL = 0;
+	SCL=0;
 	Delay5us();
-	SDA = 0;
+	SDA=0;
 	Delay5us();
-	SCL = 1;
+	SCL=1;
 	Delay5us();
-	SDA = 1;
+	SDA=1;
 	Delay5us();
 }
 
 bit i2c_write_byte(uchar dat)
 {
-	bit ack=1;
-	uchar mask;
+	static bit ack=1;
+	static uchar mask=0x00;
 	SDA=1;
 	Delay5us();
 	for(mask=0x80;mask;mask>>=1)
 	{
-		SDA=mask&dat;
+		SDA=dat&mask;
 		Delay5us();
 		SCL=1;
 		Delay5us();
@@ -63,27 +62,25 @@ bit i2c_write_byte(uchar dat)
 	return ack;
 }
 
-uchar i2c_read_byte_ack()
+uchar i2c_read_byte_ack(void)
 {
-	uchar mask,val;
+	static uchar mask=0x00,val=0;
 	SDA=1;
 	Delay5us();
 	for(mask=0x80;mask;mask>>=1)
 	{
 		if(SDA)
-		{
 			val|=mask;
-		}	
 		else
-		{
 			val&=~mask;
-		}
 		Delay5us();
 		SCL=1;
 		Delay5us();
 		SCL=0;
 		Delay5us();
 	}
+	SDA=1;
+	Delay5us();
 	SDA=0;
 	Delay5us();
 	SCL=1;
@@ -93,21 +90,17 @@ uchar i2c_read_byte_ack()
 	return val;
 }
 
-uchar i2c_read_byte_nack()
+uchar i2c_read_byte_nack(void)
 {
-	uchar mask,val;
+	static uchar mask=0x00,val=0;
 	SDA=1;
 	Delay5us();
 	for(mask=0x80;mask;mask>>=1)
 	{
 		if(SDA)
-		{
 			val|=mask;
-		}
 		else
-		{
 			val&=~mask;
-		}
 		Delay5us();
 		SCL=1;
 		Delay5us();
@@ -125,17 +118,12 @@ uchar i2c_read_byte_nack()
 
 bit i2c_device(uchar dev,bit read)
 {
-	// read:1 write:0
 	static bit ack=1;
 	dev<<=1;
 	if(read)
-	{
 		dev|=0x01;
-	}
 	else
-	{
 		dev&=0xfe;
-	}
 	ack=i2c_write_byte(dev);
 	return ack;
 }
@@ -151,10 +139,9 @@ void e2_write(uchar word,uchar *dat,uchar len)
 		i2c_stop();
 	}while(1);
 	i2c_write_byte(word);
-	while(len)
+	while(len--)
 	{
 		i2c_write_byte(*dat++);
-		len--;
 	}
 	i2c_stop();
 }
@@ -172,10 +159,9 @@ void e2_read(uchar word,uchar *dat,uchar len)
 	i2c_write_byte(word);
 	i2c_start();
 	i2c_device(0x50,1);
-	while(len>1)
+	while(len-->1)
 	{
 		*dat++=i2c_read_byte_ack();
-		len--;
 	}
 	*dat=i2c_read_byte_nack();
 	len--;
@@ -191,38 +177,37 @@ void e2_read(uchar word,uchar *dat,uchar len)
 //	}
 //}
 
-void get_dac(uchar *dat,uchar len)
+void adc_get(uchar *dat,uchar len)
 {
 	do{
 		i2c_start();
 		if(~i2c_device(0x48,0))
 		{
 			break;
-		}	
+		}
 		i2c_stop();
 	}while(1);
 	i2c_write_byte(0x44);
 	i2c_start();
 	i2c_device(0x48,1);
 	i2c_read_byte_ack();
-	while(len-1)
+	while(len-->1)
 	{
 		*dat++=i2c_read_byte_ack();
-		len--;
 	}
 	*dat=i2c_read_byte_nack();
 	len--;
 	i2c_stop();
 }
 
-void set_dac(uchar dat)
+void dac_set(uchar dat)
 {
 	do{
 		i2c_start();
 		if(~i2c_device(0x48,0))
 		{
 			break;
-		}	
+		}
 		i2c_stop();
 	}while(1);
 	i2c_write_byte(0x44);
