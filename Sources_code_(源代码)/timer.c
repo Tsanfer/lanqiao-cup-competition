@@ -5,7 +5,7 @@ static uchar rxd_data=0;
 static uchar temperature=0;
 static uchar ds1302_time[7];
 static uint sonic_distance=0;
-static idata uchar e2_write_data[8]={0,1,2,3,4,5,6,7},e2_read_data[8];
+static uchar e2_write_data[8]={0,1,2,3,4,5,6,7},e2_read_data[8];
 static uchar adc_data[4];
 static uchar dac_data=128;
 static uchar trg_times,trg_clock,cont_clock;
