@@ -2,19 +2,6 @@
 
 sbit DQ=P1^4;
 
-void Delay50us()		//@11.0592MHz
-{
-	unsigned char i, j;
-
-	_nop_();
-	i = 1;
-	j = 134;
-	do
-	{
-		while (--j);
-	} while (--i);
-}
-
 void Delay500us()		//@11.0592MHz
 {
 	unsigned char i, j;
@@ -23,6 +10,19 @@ void Delay500us()		//@11.0592MHz
 	_nop_();
 	i = 6;
 	j = 93;
+	do
+	{
+		while (--j);
+	} while (--i);
+}
+
+void Delay50us()		//@11.0592MHz
+{
+	unsigned char i, j;
+
+	_nop_();
+	i = 1;
+	j = 134;
 	do
 	{
 		while (--j);
@@ -39,9 +39,9 @@ void ds18b20_start(void)
 	while(~DQ);
 }
 
-void ds18b20_write_byte(uchar dat)
+void ds18b20_write(uchar dat)
 {
-	uchar mask=0x00;
+	static uchar mask=0x00;
 	DQ=1;
 	for(mask=0x01;mask;mask<<=1)
 	{
@@ -54,9 +54,9 @@ void ds18b20_write_byte(uchar dat)
 	DQ=1;
 }
 
-uchar ds18b20_read_byte(void)
+uchar ds18b20_read(void)
 {
-	uchar mask=0x00,val=0;
+	static uchar mask=0x00,val=0;
 	DQ=1;
 	for(mask=0x01;mask;mask<<=1)
 	{
@@ -76,21 +76,21 @@ uchar ds18b20_read_byte(void)
 void ds18b20Init(void)
 {
 	ds18b20_start();
-	ds18b20_write_byte(0xcc);
-	ds18b20_write_byte(0x44);
+	ds18b20_write(0xcc);
+	ds18b20_write(0x44);
 }
 
 uchar ds18b20_get(void)
 {
 	static uchar val=0,temp[2];
 	ds18b20_start();
-	ds18b20_write_byte(0xcc);
-	ds18b20_write_byte(0x44);
+	ds18b20_write(0xcc);
+	ds18b20_write(0x44);
 	ds18b20_start();
-	ds18b20_write_byte(0xcc);
-	ds18b20_write_byte(0xbe);
-	temp[0]=ds18b20_read_byte();
-	temp[1]=ds18b20_read_byte();
+	ds18b20_write(0xcc);
+	ds18b20_write(0xbe);
+	temp[0]=ds18b20_read();
+	temp[1]=ds18b20_read();
 	val=temp[0]>>4&0x0f|temp[1]<<4&0xf0;
 	return val;
 }
