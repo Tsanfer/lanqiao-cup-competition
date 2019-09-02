@@ -50,7 +50,7 @@ void trg_run(void)
 		{
 			trg_clock=0;
 		}
-		//buzz=1;
+		buzz=1;
 		switch(key_val)
 		{
 			case 1:page=1;break;
