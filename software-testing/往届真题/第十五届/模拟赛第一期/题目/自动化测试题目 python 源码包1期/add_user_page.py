@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 
 """
  * Page3-【新增用户】页面 
@@ -20,30 +21,36 @@ class AddUserPage:
     
     def input_user_name(self, userName):
         # TODO 实现 表单【用户名】点击和输入 的方法
-
-
+        e = self.driver.find_element(By.XPATH, '//*[@id="userName"]')
+        e.clear()
+        e.send_keys(userName)
+        
+        
     
     def input_login_name(self, loginName):
         # TODO 实现 表单【登录账号】点击和输入 的方法
+        e = self.driver.find_element(By.XPATH, '//*[@id="loginName"]')
+        e.clear()
+        e.send_keys(loginName)
 
 
     
     def input_login_password(self, loginPassword):
         # TODO 实现 表单【密码】点击和输入 的方法
+        e = self.driver.find_element(By.XPATH, '//*[@id="password"]')
+        e.clear()
+        e.send_keys(loginPassword)
 
 
     
     def click_role(self):
         # TODO 实现 表单【普通用户】单选 的方法
-
+        e = self.driver.find_element(By.XPATH, '/html/body/div[1]/form/div[6]/div/div/div/label[2]')
+        e.click()
 
     
     def click_save_button(self):
         # TODO 实现 表单【保存】按钮点击的方法
-        
-        
-        
-        
-        
-        
-        
+        e = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/button[1]')
+        e.click()
+     

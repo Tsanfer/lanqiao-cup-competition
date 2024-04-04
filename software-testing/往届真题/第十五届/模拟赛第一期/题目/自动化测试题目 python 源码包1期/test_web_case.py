@@ -3,9 +3,11 @@ from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 
 from cn.lanqiao.web.login_page import LoginPage
-from cn.lanqiao.web.add_user_page import AddUserPage
 from cn.lanqiao.web.user_manage_page import UserManagePage
+from cn.lanqiao.web.add_user_page import AddUserPage
 
+from time import sleep
+from selenium.webdriver.common.by import By
 
 """
  * 请按照操作步骤编写测试用例
@@ -38,7 +40,7 @@ class TestWebCase(unittest.TestCase):
         self.driver.maximize_window()
         
         # TODO 打开被测系统的网址
-        self.driver.get("")
+        self.driver.get("https://660e94508755772af51d62b7.hz-iframe-svc.simplelab.cn/login")
 
 
     # 请在此方法中续写测试用例
@@ -54,10 +56,68 @@ class TestWebCase(unittest.TestCase):
         
         
         # TODO 请调用以上3个实例化对象中的方法完成测试用例代码（具体请参照题目中的用例步骤描述和截图）
+        login_page.input_login_name("admin")
+        login_page.input_login_password("admin123")
+        login_page.click_login_button()
+        
+        # 等待进入【用户管理】界面
+        sleep(1)
+        
+        self.assertEqual(user_manage_page.get_username_text(), "蓝桥超管")
+        
+        user_manage_page.click_system_menu()
+        user_manage_page.click_user_menu()
+        
+        #  切换到【用户管理】界面内部
+        self.driver.switch_to.default_content()
+        self.driver.switch_to.frame(1)
+        # /html/body/div[1]/div/div[3]/iframe[2]
+        sleep(1)
+        
+        user_manage_page.click_add_user_button()
+        
+        #  等待进入【添加用户】界面
+        sleep(1)
+        
+        #  切换到【添加用户】界面内部
+        self.driver.switch_to.default_content()
+        self.driver.switch_to.frame(2)
+        sleep(1)
+        
+        add_user_page.input_user_name("whoami")
+        add_user_page.input_login_name("whoami_account")
+        add_user_page.input_login_password("123456")
+        add_user_page.click_role()
+        add_user_page.click_save_button()
+        
+        #  切换到【用户管理】界面内部
+        sleep(1)
+        self.driver.switch_to.default_content()
+        self.driver.switch_to.frame(1)
+        sleep(1)
+        
+        self.assertEqual(user_manage_page.get_page_number_text(), "显示第 1 到第 3 条记录，总共 3 条记录")
+        
+        user_manage_page.input_login_name("whoami_account")
+        user_manage_page.click_search_button()
+        
+        #  等待搜索成功
+        sleep(1)
+        
+        self.assertEqual(user_manage_page.get_page_number_text(), "显示第 1 到第 1 条记录，总共 1 条记录")
+        
+        user_manage_page.delete_user()
+        sleep(1)
+        user_manage_page.click_reset_button()
+        self.assertEqual(user_manage_page.get_page_number_text(), "显示第 1 到第 2 条记录，总共 2 条记录")
+        
+        self.driver.switch_to.default_content()
+        sleep(1)
+        user_manage_page.click_login_out()
         
         
         
-        
+        sleep(3)
         
     # 浏览器退出
     def tearDown(self):
